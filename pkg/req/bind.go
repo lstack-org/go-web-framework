@@ -12,16 +12,24 @@ var (
 
 //Bind 用户请求参数绑定
 func Bind(ctx *gin.Context, object Interface, binders ...Binder) error {
-	if len(binders) == 0 {
-		binders = defaultBinders
-	}
+	if customizeBinder, ok := object.(CustomizeBinder); ok {
+		err := customizeBinder.Bind(ctx)
+		if err != nil {
+			res.Res(ctx, res.ErrorMsgsRes(code.BindError, err))
+			return err
+		}
+	}else {
+		if len(binders) == 0 {
+			binders = defaultBinders
+		}
 
-	for _, binder := range binders {
-		if binder != nil {
-			err := binder(ctx, object)
-			if err != nil {
-				res.Res(ctx, res.ErrorMsgsRes(code.BindError, err))
-				return err
+		for _, binder := range binders {
+			if binder != nil {
+				err := binder(ctx, object)
+				if err != nil {
+					res.Res(ctx, res.ErrorMsgsRes(code.BindError, err))
+					return err
+				}
 			}
 		}
 	}
@@ -33,6 +41,7 @@ func Bind(ctx *gin.Context, object Interface, binders ...Binder) error {
 
 	object.SetCtx(ctx)
 	return nil
+
 }
 
 //BindJSON 用于绑定请求体
