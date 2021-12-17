@@ -78,6 +78,26 @@ func Succeed() Interface {
 	return &Response{}
 }
 
+func SucceedRes(data interface{}) Interface {
+	return &Response{
+		Data: data,
+	}
+}
+
+func ListRes(total int, data interface{}) Interface {
+	return SucceedRes(ListData{
+		Total: total,
+		Items: data,
+	})
+}
+
+func ErrCheckRes(data interface{}, err error) Interface {
+	if err != nil {
+		return ErrorRes(err)
+	}
+	return SucceedRes(data)
+}
+
 func ErrorRes(err error) Interface {
 	s := &Response{}
 	s.ErrorSave(err)
