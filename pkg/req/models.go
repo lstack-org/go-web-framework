@@ -12,6 +12,16 @@ type Search struct {
 	SearchValue string `json:"searchValue" form:"searchValue" validate:"required_with=SearchKey"`
 }
 
+//ToMap 用于将Search转换为一个map对象
+func (s *Search) ToMap() map[string]string {
+	if s == nil {
+		return nil
+	}
+	return map[string]string{
+		s.SearchKey: s.SearchValue,
+	}
+}
+
 //BatchReq 用于批量操作，Infos数组中一般为某资源的id，常见的适用场景：批量删除资源
 type BatchReq struct {
 	Infos []string `json:"infos" validate:"required,min=1"`
