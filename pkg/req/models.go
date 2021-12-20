@@ -1,9 +1,13 @@
 package req
 
+var _ PageAble = Common{}
+var _ SearchAble = Common{}
+var _ SortAble = Common{}
+
 type Common struct {
-	Paging
-	Search
-	Sort
+	*Paging
+	*Search
+	*Sort
 }
 
 var _ PageAble = &Paging{}
@@ -11,6 +15,13 @@ var _ PageAble = &Paging{}
 type Paging struct {
 	Page     int `json:"page" form:"page" validate:"required_with=PageSize,omitempty,gt=0"`
 	PageSize int `json:"pageSize" form:"pageSize" validate:"required_with=Page,omitempty,gt=0"`
+}
+
+func (p *Paging) CanPage() bool {
+	if p == nil {
+		return false
+	}
+	return p.Page > 0 && p.PageSize > 0
 }
 
 func (p *Paging) PNumber() int {
@@ -28,21 +39,19 @@ type Search struct {
 	SearchValue string `json:"searchValue" form:"searchValue" validate:"required_with=SearchKey,omitempty"`
 }
 
+func (s *Search) CanSearch() bool {
+	if s == nil {
+		return false
+	}
+	return s.SearchKey != "" && s.SearchValue != ""
+}
+
 func (s *Search) Key() string {
 	return s.SearchKey
 }
 
 func (s *Search) Value() interface{} {
 	return s.SearchValue
-}
-
-func (s *Search) ToMap() map[string]interface{} {
-	if s == nil {
-		return nil
-	}
-	return map[string]interface{}{
-		s.SearchKey: s.SearchValue,
-	}
 }
 
 var _ SortAble = &Sort{}
@@ -52,7 +61,14 @@ type Sort struct {
 	SortField string `json:"sortField" form:"sortField" validate:"required_with=Asc"`
 }
 
-func (s *Sort) Key() string {
+func (s *Sort) CanSort() bool {
+	if s == nil {
+		return false
+	}
+	return s.SortField != ""
+}
+
+func (s *Sort) SortKey() string {
 	return s.SortField
 }
 

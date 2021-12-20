@@ -20,6 +20,8 @@ type PageAble interface {
 	PNumber() int
 	//PSize 表示每页长度
 	PSize() int
+	//CanPage 用于判断是否可分页
+	CanPage() bool
 }
 
 //SearchAble 用于模糊查询
@@ -28,14 +30,16 @@ type SearchAble interface {
 	Key() string
 	//Value 表示模糊查询的值
 	Value() interface{}
-	//ToMap 用于将SearchAble转换为一个map[string]interface{}
-	ToMap() map[string]interface{}
+	//CanSearch 用于判断是否可模糊查询
+	CanSearch() bool
 }
 
 //SortAble 用于查询结果排序
 type SortAble interface {
-	//Key 表示用于排序的键
-	Key() string
+	//SortKey 表示用于排序的键
+	SortKey() string
 	//IsAsc 表示是否是升序排序
 	IsAsc() bool
+	//CanSort 用于判断是否可排序
+	CanSort() bool
 }
