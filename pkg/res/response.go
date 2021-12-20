@@ -7,6 +7,7 @@ import (
 	"github.com/lstack-org/go-web-framework/pkg/code"
 	k8sErrors "k8s.io/apimachinery/pkg/util/errors"
 	"net/http"
+	"reflect"
 	"strings"
 )
 
@@ -85,9 +86,26 @@ func SucceedRes(data interface{}) Interface {
 }
 
 func ListRes(total int, data interface{}) Interface {
+	var d interface{}
+	if data == nil {
+		d = make([]interface{}, 0)
+	} else {
+		v := reflect.ValueOf(data)
+		if v.Kind() == reflect.Ptr {
+			v = v.Elem()
+		}
+		if v.Kind() != reflect.Slice && v.Kind() != reflect.Array {
+			panic("type must be Array or Slice")
+		}
+		if v.Len() == 0 {
+			d = make([]interface{}, 0)
+		} else {
+			d = data
+		}
+	}
 	return SucceedRes(ListData{
 		Total: total,
-		Items: data,
+		Items: d,
 	})
 }
 
@@ -96,6 +114,13 @@ func ErrCheckRes(data interface{}, err error) Interface {
 		return ErrorRes(err)
 	}
 	return SucceedRes(data)
+}
+
+func ErrCheckListRes(total int, data interface{}, err error) Interface {
+	if err != nil {
+		return ErrorRes(err)
+	}
+	return ListRes(total, data)
 }
 
 func ErrorRes(err error) Interface {

@@ -1,10 +1,16 @@
 package req
 
+type Common struct {
+	Paging
+	Search
+	Sort
+}
+
 var _ PageAble = &Paging{}
 
 type Paging struct {
-	Page     int `json:"page" form:"page" validate:"omitempty,gt=0"`
-	PageSize int `json:"pageSize" form:"pageSize" validate:"required_with=Page,gt=0"`
+	Page     int `json:"page" form:"page" validate:"required_with=PageSize,omitempty,gt=0"`
+	PageSize int `json:"pageSize" form:"pageSize" validate:"required_with=Page,omitempty,gt=0"`
 }
 
 func (p *Paging) PNumber() int {
@@ -18,8 +24,8 @@ func (p *Paging) PSize() int {
 var _ SearchAble = &Search{}
 
 type Search struct {
-	SearchKey   string      `json:"searchKey" form:"searchKey" validate:"omitempty"`
-	SearchValue interface{} `json:"searchValue" form:"searchValue" validate:"required_with=SearchKey"`
+	SearchKey   string `json:"searchKey" form:"searchKey" validate:"required_with=SearchValue,omitempty"`
+	SearchValue string `json:"searchValue" form:"searchValue" validate:"required_with=SearchKey,omitempty"`
 }
 
 func (s *Search) Key() string {
