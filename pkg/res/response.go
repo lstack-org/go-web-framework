@@ -12,6 +12,9 @@ import (
 )
 
 func Res(ctx *gin.Context, res Interface) {
+	if res == nil {
+		return
+	}
 	err := res.Check()
 	if err != nil {
 		serviceCode := res.ErrorHandle(err)
