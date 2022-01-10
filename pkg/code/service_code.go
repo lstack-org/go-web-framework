@@ -2,7 +2,6 @@ package code
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
@@ -32,7 +31,7 @@ func (s ServiceCode) MergeObj(msg interface{}) Code {
 }
 
 //GetMsg 根据配置，返回中文错误或英文错误
-func (s ServiceCode) GetMsg(ctx *gin.Context) string {
+func (s ServiceCode) GetMsg(ctx Header) string {
 	if ctx == nil {
 		return s.EnglishMsg
 	}

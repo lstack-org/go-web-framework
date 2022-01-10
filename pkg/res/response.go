@@ -40,7 +40,7 @@ func (r *Response) Code() int {
 }
 
 //SucceedRes 请求成功响应处理
-func (r *Response) SucceedRes(ctx *gin.Context) {
+func (r *Response) SucceedRes(ctx code.Header) {
 	r.Status = code.Success.BusinessCode
 	r.ResMsg = code.Success.GetMsg(ctx)
 }
@@ -56,7 +56,7 @@ func (r *Response) ErrorHandle(err error) code.Code {
 }
 
 //ErrorRes 根据serviceCode，进行错误响应
-func (r *Response) ErrorRes(ctx *gin.Context, serviceCode code.Code) {
+func (r *Response) ErrorRes(ctx code.Header, serviceCode code.Code) {
 	r.Status = serviceCode.BusinessStatus()
 	r.ResMsg = serviceCode.GetMsg(ctx)
 }
