@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+var _ Code = ServiceCode{}
+
 //ServiceCode 封装错误码，和对应的错误信息
 type ServiceCode struct {
 	HttpCode     int
@@ -14,8 +16,16 @@ type ServiceCode struct {
 	ChineseMsg   string
 }
 
+func (s ServiceCode) BusinessStatus() int {
+	return s.BusinessCode
+}
+
+func (s ServiceCode) HttpStatus() int {
+	return s.HttpCode
+}
+
 //MergeObj 合并错误信息
-func (s ServiceCode) MergeObj(msg interface{}) ServiceCode {
+func (s ServiceCode) MergeObj(msg interface{}) Code {
 	s.EnglishMsg = fmt.Sprintf("%s,%v", s.EnglishMsg, msg)
 	s.ChineseMsg = fmt.Sprintf("%s,%v", s.ChineseMsg, msg)
 	return s

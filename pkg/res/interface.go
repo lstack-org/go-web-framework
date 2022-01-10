@@ -13,9 +13,9 @@ type Interface interface {
 	//错误缓存
 	ErrorSave(err error)
 	//错误处理
-	ErrorHandle(err error) code.ServiceCode
+	ErrorHandle(err error) code.Code
 	//无错误响应处理
 	SucceedRes(ctx *gin.Context)
 	//基于ServiceCode进行错误响应处理
-	ErrorRes(ctx *gin.Context, serviceCode code.ServiceCode)
+	ErrorRes(ctx *gin.Context, serviceCode code.Code)
 }
