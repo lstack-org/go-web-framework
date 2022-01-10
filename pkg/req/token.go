@@ -89,21 +89,6 @@ func (iamToken *IamToken) GetSubAuthUserKeystoneUserID() string {
 	return ""
 }
 
-//IsAdministrator 是否为管理员
-func (iamToken *IamToken) IsAdministrator() bool {
-	if iamToken.IsPrimaryAuthUser {
-		return true
-	}
-
-	policies := iamToken.SubAuthUser.Role.Policies
-	for _, policy := range policies {
-		if policy == "LstackAHSFullAccess" || policy == "AdministratorAccess" {
-			return true
-		}
-	}
-	return false
-}
-
 //GetSubAuthUserGroupIDs 获取子用户组列表
 func (iamToken *IamToken) GetSubAuthUserGroupIDs() []string {
 	var groupIds []string
