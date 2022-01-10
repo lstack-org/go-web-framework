@@ -11,6 +11,14 @@ import (
 	"strings"
 )
 
+var (
+	customizeErrorHandler CustomizeErrorHandler
+)
+
+func InitCustomizeErrorHandler(c CustomizeErrorHandler) {
+	customizeErrorHandler = c
+}
+
 func Res(ctx *gin.Context, res Interface) {
 	if res == nil {
 		return
@@ -19,7 +27,7 @@ func Res(ctx *gin.Context, res Interface) {
 	if err != nil {
 		serviceCode := res.ErrorHandle(err)
 		res.ErrorRes(ctx, serviceCode)
-		ctx.JSON(serviceCode.HttpCode, res)
+		ctx.JSON(serviceCode.HttpStatus(), res)
 	} else {
 		res.SucceedRes(ctx)
 		ctx.JSON(http.StatusOK, res)
@@ -40,24 +48,28 @@ func (r *Response) Code() int {
 }
 
 //SucceedRes 请求成功响应处理
-func (r *Response) SucceedRes(ctx *gin.Context) {
+func (r *Response) SucceedRes(ctx code.Header) {
 	r.Status = code.Success.BusinessCode
 	r.ResMsg = code.Success.GetMsg(ctx)
 }
 
 //ErrorHandle 根据错误，返回错误码，默认返回e.Error
-func (r *Response) ErrorHandle(err error) code.ServiceCode {
+func (r *Response) ErrorHandle(err error) code.Code {
 	switch c := err.(type) {
-	case code.ServiceCode:
+	case code.Code:
 		return c
 	default:
+		if customizeErrorHandler != nil {
+			return customizeErrorHandler(err)
+		}
+
 		return code.Error.MergeObj(err.Error())
 	}
 }
 
 //ErrorRes 根据serviceCode，进行错误响应
-func (r *Response) ErrorRes(ctx *gin.Context, serviceCode code.ServiceCode) {
-	r.Status = serviceCode.BusinessCode
+func (r *Response) ErrorRes(ctx code.Header, serviceCode code.Code) {
+	r.Status = serviceCode.BusinessStatus()
 	r.ResMsg = serviceCode.GetMsg(ctx)
 }
 
@@ -132,7 +144,7 @@ func ErrorRes(err error) Interface {
 	return s
 }
 
-func ErrorsRes(code code.ServiceCode, errs ...error) Interface {
+func ErrorsRes(code code.Code, errs ...error) Interface {
 	err := k8sErrors.NewAggregate(errs)
 	if err != nil {
 		return ErrorMsgsRes(code, err.Error())
@@ -140,7 +152,7 @@ func ErrorsRes(code code.ServiceCode, errs ...error) Interface {
 	return ErrorMsgsRes(code)
 }
 
-func ErrorMsgsRes(code code.ServiceCode, mergedMsg ...interface{}) Interface {
+func ErrorMsgsRes(code code.Code, mergedMsg ...interface{}) Interface {
 	if len(mergedMsg) > 0 {
 		var msgs []string
 		for _, msg := range mergedMsg {
