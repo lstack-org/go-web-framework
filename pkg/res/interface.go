@@ -20,4 +20,4 @@ type Interface interface {
 }
 
 //CustomizeErrorHandler 自定义错误处理
-type CustomizeErrorHandler func(err error) code.ServiceCode
+type CustomizeErrorHandler func(err error) code.Code
