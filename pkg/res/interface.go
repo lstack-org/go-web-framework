@@ -19,3 +19,6 @@ type Interface interface {
 	//基于ServiceCode进行错误响应处理
 	ErrorRes(ctx *gin.Context, serviceCode code.ServiceCode)
 }
+
+//CustomizeErrorHandler 自定义错误处理
+type CustomizeErrorHandler func(err error) code.ServiceCode

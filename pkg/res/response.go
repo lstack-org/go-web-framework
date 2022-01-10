@@ -11,6 +11,14 @@ import (
 	"strings"
 )
 
+var (
+	customizeErrorHandler CustomizeErrorHandler
+)
+
+func InitCustomizeErrorHandler(c CustomizeErrorHandler) {
+	customizeErrorHandler = c
+}
+
 func Res(ctx *gin.Context, res Interface) {
 	if res == nil {
 		return
@@ -51,6 +59,10 @@ func (r *Response) ErrorHandle(err error) code.ServiceCode {
 	case code.ServiceCode:
 		return c
 	default:
+		if customizeErrorHandler != nil {
+			return customizeErrorHandler(err)
+		}
+
 		return code.Error.MergeObj(err.Error())
 	}
 }
