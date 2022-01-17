@@ -16,9 +16,9 @@ import (
 )
 
 var (
-	zhTrans ut.Translator
-	enTrans ut.Translator
-	val     = validator.New()
+	ZhTrans ut.Translator
+	EnTrans ut.Translator
+	Val               = validator.New()
 )
 
 func init() {
@@ -26,11 +26,11 @@ func init() {
 	enT := en.New()
 	uni := ut.New(enT, zhT, enT)
 
-	zhTrans, _ = uni.GetTranslator(zhT.Locale())
-	_ = chTranslations.RegisterDefaultTranslations(val, zhTrans)
+	ZhTrans, _ = uni.GetTranslator(zhT.Locale())
+	_ = chTranslations.RegisterDefaultTranslations(Val, ZhTrans)
 
-	enTrans, _ = uni.GetTranslator(enT.Locale())
-	_ = enTranslations.RegisterDefaultTranslations(val, enTrans)
+	EnTrans, _ = uni.GetTranslator(enT.Locale())
+	_ = enTranslations.RegisterDefaultTranslations(Val, EnTrans)
 	return
 }
 
@@ -44,10 +44,10 @@ func translate(ctx *gin.Context, errs ...error) string {
 
 		lang := ctx.GetHeader(code.AcceptLanguageHeader)
 		switch lang {
-		case code.AcceptLanguageZh, zhTrans.Locale():
-			newErrs = append(newErrs, errors.New(validationErrorsTranslationsToString(validationErr.Translate(zhTrans))))
+		case code.AcceptLanguageZh, ZhTrans.Locale():
+			newErrs = append(newErrs, errors.New(validationErrorsTranslationsToString(validationErr.Translate(ZhTrans))))
 		default:
-			newErrs = append(newErrs, errors.New(validationErrorsTranslationsToString(validationErr.Translate(enTrans))))
+			newErrs = append(newErrs, errors.New(validationErrorsTranslationsToString(validationErr.Translate(EnTrans))))
 		}
 	}
 	return k8sErrs.NewAggregate(newErrs).Error()
