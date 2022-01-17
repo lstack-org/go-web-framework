@@ -34,7 +34,7 @@ func Bind(ctx *gin.Context, object Interface, binders ...Binder) error {
 		}
 	}
 
-	if err := val.Struct(object); err != nil {
+	if err := Val.Struct(object); err != nil {
 		res.Res(ctx, res.ErrorMsgsRes(code.BindError, translate(ctx, err)))
 		return err
 	}
