@@ -9,7 +9,7 @@ type Code interface {
 	//GetMsg 用于获取错误码描述信息，参数ctx用于获取描述信息语言类型如中文、英文等
 	GetMsg(ctx Header) string
 	//MergeObj 用于合并错误信息
-	MergeObj(msg interface{}) Code
+	MergeObj(msgs ...interface{}) Code
 }
 
 type Header interface {

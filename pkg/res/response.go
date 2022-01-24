@@ -2,13 +2,11 @@ package res
 
 import (
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/lstack-org/go-web-framework/pkg/code"
 	k8sErrors "k8s.io/apimachinery/pkg/util/errors"
 	"net/http"
 	"reflect"
-	"strings"
 )
 
 var (
@@ -60,7 +58,10 @@ func (r *Response) ErrorHandle(err error) code.Code {
 		return c
 	default:
 		if customizeErrorHandler != nil {
-			return customizeErrorHandler(err)
+			c := customizeErrorHandler(err)
+			if c != nil {
+				return c
+			}
 		}
 
 		return code.Error.MergeObj(err.Error())
@@ -154,11 +155,7 @@ func ErrorsRes(code code.Code, errs ...error) Interface {
 
 func ErrorMsgsRes(code code.Code, mergedMsg ...interface{}) Interface {
 	if len(mergedMsg) > 0 {
-		var msgs []string
-		for _, msg := range mergedMsg {
-			msgs = append(msgs, fmt.Sprintf("%v", msg))
-		}
-		code = code.MergeObj(strings.Join(msgs, ","))
+		code = code.MergeObj(mergedMsg...)
 	}
 	return ErrorRes(code)
 }
