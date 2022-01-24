@@ -3,6 +3,7 @@ package code
 import (
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 var _ Code = ServiceCode{}
@@ -13,6 +14,7 @@ type ServiceCode struct {
 	BusinessCode int
 	EnglishMsg   string
 	ChineseMsg   string
+	Format       bool
 }
 
 func (s ServiceCode) BusinessStatus() int {
@@ -24,9 +26,22 @@ func (s ServiceCode) HttpStatus() int {
 }
 
 //MergeObj 合并错误信息
-func (s ServiceCode) MergeObj(msg interface{}) Code {
-	s.EnglishMsg = fmt.Sprintf("%s,%v", s.EnglishMsg, msg)
-	s.ChineseMsg = fmt.Sprintf("%s,%v", s.ChineseMsg, msg)
+func (s ServiceCode) MergeObj(msgs ...interface{}) Code {
+	if len(msgs) == 0 {
+		return s
+	}
+	if s.Format {
+		s.EnglishMsg = fmt.Sprintf(s.EnglishMsg, msgs...)
+		s.ChineseMsg = fmt.Sprintf(s.ChineseMsg, msgs...)
+	} else {
+		var mergedMsgs []string
+		for _, msg := range msgs {
+			mergedMsgs = append(mergedMsgs, fmt.Sprintf("%v", msg))
+		}
+		join := strings.Join(mergedMsgs, ",")
+		s.EnglishMsg = fmt.Sprintf("%s,%v", s.EnglishMsg, join)
+		s.ChineseMsg = fmt.Sprintf("%s,%v", s.ChineseMsg, join)
+	}
 	return s
 }
 
