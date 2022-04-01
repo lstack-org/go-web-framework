@@ -46,7 +46,7 @@ func (b *Base) Action() res.Interface {
 }
 
 func (b *Base) Run(api Interface) (response res.Interface) {
-	timeoutCtx, cancelFunc := context.WithTimeout(context.TODO(), b.Timeout())
+	timeoutCtx, cancelFunc := context.WithTimeout(context.TODO(), api.Timeout())
 	defer func() {
 		//全局panic recover
 		if err := recover(); err != nil {
