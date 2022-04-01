@@ -97,4 +97,11 @@ var (
 		EnglishMsg:   "ding notify failed",
 		ChineseMsg:   "钉钉通知失败",
 	}
+
+	CtxTimeoutError = ServiceCode{
+		HttpCode:     http.StatusOK,
+		BusinessCode: CtxTimeout,
+		EnglishMsg:   "request timout",
+		ChineseMsg:   "请求超时",
+	}
 )

@@ -26,3 +26,9 @@ func RunJSON(ctx *gin.Context, api Interface, binders ...req.Binder) {
 	binders = append(binders, req.BindJSON)
 	Run(ctx, api, binders...)
 }
+
+//RunURI 自带uri参数绑定
+func RunURI(ctx *gin.Context, api Interface, binders ...req.Binder) {
+	binders = append(binders, req.BindUri)
+	Run(ctx, api, binders...)
+}
