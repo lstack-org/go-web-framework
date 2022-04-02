@@ -46,11 +46,11 @@ func (s *Search) CanSearch() bool {
 	return s.SearchKey != "" && s.SearchValue != ""
 }
 
-func (s *Search) Key() string {
+func (s *Search) SKey() string {
 	return s.SearchKey
 }
 
-func (s *Search) Value() interface{} {
+func (s *Search) SValue() interface{} {
 	return s.SearchValue
 }
 

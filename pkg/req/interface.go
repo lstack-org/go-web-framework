@@ -26,10 +26,10 @@ type PageAble interface {
 
 //SearchAble 用于模糊查询
 type SearchAble interface {
-	//Key 表示用于模糊查询的键
-	Key() string
-	//Value 表示模糊查询的值
-	Value() interface{}
+	//SKey 表示用于模糊查询的键
+	SKey() string
+	//SValue 表示模糊查询的值
+	SValue() interface{}
 	//CanSearch 用于判断是否可模糊查询
 	CanSearch() bool
 }
