@@ -8,6 +8,21 @@ import (
 	"k8s.io/klog/v2"
 )
 
+var (
+	skipPaths = []string{
+		"/health",
+	}
+)
+
+//AddLogSkipPath 用于添加自定义不打印日志的接口
+func AddLogSkipPath(path string) {
+	skipPaths = append(skipPaths, path)
+}
+
+func getSkipPaths() []string {
+	return skipPaths
+}
+
 //Logger 用于gin请求调用时，输出请求体，响应体的日志中间件
 func Logger() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
@@ -31,9 +46,7 @@ func Logger() gin.HandlerFunc {
 		gin.LoggerWithConfig(gin.LoggerConfig{
 			Formatter: nil,
 			Output:    buf,
-			SkipPaths: []string{
-				"/health",
-			},
+			SkipPaths: getSkipPaths(),
 		})(ctx)
 
 		log := buf.String()
