@@ -14,9 +14,9 @@ var (
 	}
 )
 
-//AddLogSkipPath 用于添加自定义不打印日志的接口
-func AddLogSkipPath(path string) {
-	skipPaths = append(skipPaths, path)
+//AddLogSkipPaths 用于添加自定义不打印日志的接口
+func AddLogSkipPaths(paths ...string) {
+	skipPaths = append(skipPaths, paths...)
 }
 
 func getSkipPaths() []string {
