@@ -6,12 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"k8s.io/klog/v2"
+	"reflect"
+	"runtime"
 )
 
 var (
 	skipPaths = []string{
 		"/health",
 	}
+
+	skipHandlerFncsMap map[string]struct{}
 )
 
 //AddLogSkipPaths 用于添加自定义不打印日志的接口
@@ -19,8 +23,20 @@ func AddLogSkipPaths(paths ...string) {
 	skipPaths = append(skipPaths, paths...)
 }
 
+//AddLogSkipHandlerFuncs 用于添加自定义不打印日志的gin.HandlerFunc
+func AddLogSkipHandlerFuncs(fncs ...gin.HandlerFunc) {
+	for _, fnc := range fncs {
+		name := runtime.FuncForPC(reflect.ValueOf(fnc).Pointer()).Name()
+		skipHandlerFncsMap[name] = struct{}{}
+	}
+}
+
 func getSkipPaths() []string {
 	return skipPaths
+}
+
+func getSkipHandlerFncsMap() map[string]struct{} {
+	return skipHandlerFncsMap
 }
 
 //Logger 用于gin请求调用时，输出请求体，响应体的日志中间件
@@ -52,6 +68,15 @@ func Logger() gin.HandlerFunc {
 		log := buf.String()
 		if log == "" {
 			return
+		}
+
+		handlerFncsMap := getSkipHandlerFncsMap()
+		if len(handlerFncsMap) > 0 {
+			name := ctx.HandlerName()
+			if _, ok := handlerFncsMap[name]; ok {
+				fmt.Print(log)
+				return
+			}
 		}
 
 		if ctx.Request.Header != nil {
