@@ -15,7 +15,7 @@ var (
 		"/health",
 	}
 
-	skipHandlerFncsMap map[string]struct{}
+	skipHandlerFncsMap = make(map[string]struct{})
 )
 
 //AddLogSkipPaths 用于添加自定义不打印日志的接口
