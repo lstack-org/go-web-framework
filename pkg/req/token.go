@@ -30,6 +30,7 @@ func (iamToken *IamToken) SetCtx(ctx *gin.Context) {
 			iamToken.IsPrimaryAuthUser = token.IsPrimaryAuthUser
 			iamToken.SubAuthUser = token.SubAuthUser
 			iamToken.Token = token.Token
+			iamToken.CCEToken = token.CCEToken
 		}
 	}
 }
