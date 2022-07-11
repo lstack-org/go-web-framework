@@ -10,6 +10,7 @@ type IamToken struct {
 	IsPrimaryAuthUser bool             `json:"isPrimaryAuthUser"`
 	SubUserGroups     []Groups         `json:"subUserGroups"`
 	Token             string           `header:"token"`
+	CCEToken          string           `json:"cceToken"`
 }
 
 func (iamToken *IamToken) GetCtx() *gin.Context {
