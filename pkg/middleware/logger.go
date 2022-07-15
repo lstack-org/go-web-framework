@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"io"
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"reflect"
@@ -54,7 +55,8 @@ func Logger() gin.HandlerFunc {
 			bodyStr = string(requestBody)
 		}
 
-		ctx.Request.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+		//ctx.Request.Body = ioutil.NopCloser(bytes.NewReader(requestBody))
+		ctx.Request.Body = &seekerReaderCloser{bytes.NewReader(requestBody)}
 		ctx.Writer = customResponseWriter
 
 		//强制打印颜色（默认Output为终端输出时才会打印）
@@ -122,3 +124,14 @@ func (w customResponseWriter) WriteString(s string) (int, error) {
 	w.body.WriteString(s)
 	return w.ResponseWriter.WriteString(s)
 }
+
+type SeekerReaderCloser interface {
+	io.Seeker
+	io.ReadCloser
+}
+
+type seekerReaderCloser struct {
+	*bytes.Reader
+}
+
+func (seekerReaderCloser) Close() error { return nil }
