@@ -53,9 +53,11 @@ func (b *Base) Run(api Interface) (response res.Interface) {
 			printStackAndNotify(api)
 			response = res.ErrorMsgsRes(code.Error, err)
 		} else {
-			if err := response.Check(); err != nil {
-				if strings.Contains(err.Error(), ctxTimeoutErr) {
-					response.ErrorSave(code.CtxTimeoutError)
+			if response != nil {
+				if err := response.Check(); err != nil {
+					if strings.Contains(err.Error(), ctxTimeoutErr) {
+						response.ErrorSave(code.CtxTimeoutError)
+					}
 				}
 			}
 		}
@@ -63,8 +65,10 @@ func (b *Base) Run(api Interface) (response res.Interface) {
 	}()
 	b.Context = timeoutCtx
 	response = api.Validate()
-	if response.Check() != nil {
-		return
+	if response != nil {
+		if response.Check() != nil {
+			return
+		}
 	}
 	return api.Action()
 }
