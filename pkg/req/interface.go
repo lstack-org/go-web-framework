@@ -16,8 +16,8 @@ type CustomizeBinder interface {
 
 // CustomizeArgsValidater 自定义校验
 type CustomizeArgsValidater interface {
-	// ArgsValidate 校验
-	ArgsValidate(ctx *gin.Context) error
+	// SkipArgsValidate 跳过参数校验
+	SkipArgsValidate() bool
 }
 
 //PageAble 用于分页查询
