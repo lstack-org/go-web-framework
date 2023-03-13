@@ -35,14 +35,15 @@ func Bind(ctx *gin.Context, object Interface, binders ...Binder) error {
 	}
 
 	if customizeValidater, ok := object.(CustomizeArgsValidater); ok {
-		err := customizeValidater.ArgsValidate(ctx)
-		res.Res(ctx, res.ErrorMsgsRes(code.BindError, err))
-		return err
-	}else {
-		if err := Val.Struct(object); err != nil {
-			res.Res(ctx, res.ErrorMsgsRes(code.BindError, translate(ctx, err)))
-			return err
+		if customizeValidater.SkipArgsValidate() {
+			object.SetCtx(ctx)
+			return nil
 		}
+	}
+
+	if err := Val.Struct(object); err != nil {
+		res.Res(ctx, res.ErrorMsgsRes(code.BindError, translate(ctx, err)))
+		return err
 	}
 
 	object.SetCtx(ctx)
