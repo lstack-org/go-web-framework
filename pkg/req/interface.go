@@ -14,6 +14,12 @@ type CustomizeBinder interface {
 	Bind(ctx *gin.Context) error
 }
 
+// CustomizeArgsValidater 自定义校验
+type CustomizeArgsValidater interface {
+	// ArgsValidate 校验
+	ArgsValidate(ctx *gin.Context) error
+}
+
 //PageAble 用于分页查询
 type PageAble interface {
 	//PNumber 表示第几页
